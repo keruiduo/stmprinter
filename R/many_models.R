@@ -112,7 +112,7 @@ many_models <- function(K, documents, vocab,
                         emtol = 1e-05, seed = NULL, runs = 50,
                         frexw = .7, net.max.em.its = 2, M = 10,
                         N = NULL, to.disk = FALSE, verbose = TRUE,
-                        cores = parallel::detectCores(),
+                        cores = NULL,
                         ...) {
 
   args <- list(
@@ -149,10 +149,16 @@ many_models <- function(K, documents, vocab,
 
   if (verbose) pb$tick(0)
   
-  models <- mclapply(
-    K, selectModel2, args, verbose, pb,
-    mc.cores = cores, mc.silent = TRUE
-  )
+  if (is.null(cores))
+    models <- apply(
+      K, selectModel2, args, verbose, pb,
+      mc.silent = TRUE
+    )
+  else
+    models <- parallel::parLapply(
+      cores, K, selectModel2, args, verbose, pb,
+      mc.silent = TRUE
+    )
   
   if (verbose) pb$tick(length(K))
   
