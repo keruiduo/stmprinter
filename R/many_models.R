@@ -151,13 +151,11 @@ many_models <- function(K, documents, vocab,
   
   if (is.null(cores))
     models <- apply(
-      K, selectModel2, args, verbose, pb,
-      mc.silent = TRUE
+      K, selectModel2, args, verbose, pb
     )
   else
     models <- parallel::parLapply(
-      cores, K, selectModel2, args, verbose, pb,
-      mc.silent = TRUE
+      cores, K, selectModel2, args, verbose, pb
     )
   
   if (verbose) pb$tick(length(K))
